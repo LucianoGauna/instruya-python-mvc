@@ -13,4 +13,4 @@ class Config:
     DB_NAME = os.getenv("DB_NAME", "instruya")
     DB_PORT = int(os.getenv("DB_PORT", 3306))
 
-    JWT_SECRET = os.getenv("JWT_SECRET", "dev_secret")
+    JWT_SECRET = os.getenv("JWT_SECRET", "dev-secret")
