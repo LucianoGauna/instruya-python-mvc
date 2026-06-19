@@ -23,7 +23,7 @@ class CarreraModel:
         if usuario is None:
             return None
 
-        return usuario.institucion_id      
+        return usuario.institucion_id
 
     @staticmethod
     def find_all_by_admin_user_id(admin_user_id):
