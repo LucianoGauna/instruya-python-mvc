@@ -1,56 +1,52 @@
 import mysql.connector
 
 from app.database import get_connection
+from app.extensions import db
+from app.models.usuario_model import Usuario
+
+class Carrera(db.Model):
+    __tablename__ = "carrera"
+
+    id = db.Column(db.Integer, primary_key=True)
+    institucion_id = db.Column(db.Integer, nullable=False)
+    nombre = db.Column(db.String(255), nullable=False)
+    activa = db.Column(db.Boolean, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True)
 
 
 class CarreraModel:
     @staticmethod
     def find_institucion_id_by_user_id(user_id):
-        connection = get_connection()
-        cursor = connection.cursor(dictionary=True)
+        usuario = db.session.get(Usuario, user_id)
 
-        query = """
-            SELECT institucion_id
-            FROM usuario
-            WHERE id = %s
-            LIMIT 1;
-        """
-
-        cursor.execute(query, (user_id,))
-        row = cursor.fetchone()
-
-        cursor.close()
-        connection.close()
-
-        if row is None:
+        if usuario is None:
             return None
 
-        return row["institucion_id"]
+        return usuario.institucion_id      
 
     @staticmethod
     def find_all_by_admin_user_id(admin_user_id):
-        connection = get_connection()
-        cursor = connection.cursor(dictionary=True)
+        institucion_id = CarreraModel.find_institucion_id_by_user_id(admin_user_id)
 
-        query = """
-            SELECT
-                c.id,
-                c.nombre,
-                c.activa,
-                c.created_at
-            FROM carrera c
-            INNER JOIN usuario u ON u.institucion_id = c.institucion_id
-            WHERE u.id = %s
-            ORDER BY c.nombre;
-        """
+        if not institucion_id:
+            return []
 
-        cursor.execute(query, (admin_user_id,))
-        rows = cursor.fetchall()
+        carreras = (
+            Carrera.query
+            .filter_by(institucion_id=institucion_id)
+            .order_by(Carrera.nombre)
+            .all()
+        )
 
-        cursor.close()
-        connection.close()
-
-        return rows
+        return [
+            {
+                "id": carrera.id,
+                "nombre": carrera.nombre,
+                "activa": int(carrera.activa),
+                "created_at": carrera.created_at,
+            }
+            for carrera in carreras
+        ]
 
     @staticmethod
     def create_for_admin(admin_user_id, nombre):
