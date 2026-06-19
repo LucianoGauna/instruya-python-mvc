@@ -11,7 +11,11 @@ class Carrera(db.Model):
     institucion_id = db.Column(db.Integer, nullable=False)
     nombre = db.Column(db.String(255), nullable=False)
     activa = db.Column(db.Boolean, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        server_default=db.text("CURRENT_TIMESTAMP"),
+    )
 
 
 class CarreraModel:
@@ -55,33 +59,25 @@ class CarreraModel:
         if not institucion_id:
             raise Exception("El admin no tiene institución asignada")
 
-        connection = get_connection()
-        cursor = connection.cursor(dictionary=True)
+        carrera = Carrera(
+            institucion_id=institucion_id,
+            nombre=nombre,
+            activa=True,
+        )
 
         try:
-            query = """
-                INSERT INTO carrera (institucion_id, nombre)
-                VALUES (%s, %s);
-            """
+            db.session.add(carrera)
+            db.session.commit()
 
-            cursor.execute(query, (institucion_id, nombre))
-            connection.commit()
-
-            carrera = {
-                "id": cursor.lastrowid,
-                "nombre": nombre,
-                "institucion_id": institucion_id,
+            return {
+                "id": carrera.id,
+                "nombre": carrera.nombre,
+                "institucion_id": carrera.institucion_id,
             }
 
-            return carrera
-
-        except mysql.connector.Error as error:
-            connection.rollback()
+        except Exception as error:
+            db.session.rollback()
             raise error
-
-        finally:
-            cursor.close()
-            connection.close()
 
     @staticmethod
     def find_by_id_for_admin(admin_user_id, carrera_id):
