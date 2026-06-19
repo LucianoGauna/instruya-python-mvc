@@ -81,29 +81,26 @@ class CarreraModel:
 
     @staticmethod
     def find_by_id_for_admin(admin_user_id, carrera_id):
-        connection = get_connection()
-        cursor = connection.cursor(dictionary=True)
+        institucion_id = CarreraModel.find_institucion_id_by_user_id(admin_user_id)
 
-        query = """
-            SELECT
-                c.id,
-                c.nombre,
-                c.activa,
-                c.created_at
-            FROM carrera c
-            INNER JOIN usuario admin ON admin.institucion_id = c.institucion_id
-            WHERE admin.id = %s
-              AND c.id = %s
-            LIMIT 1;
-        """
+        if not institucion_id:
+            return None
 
-        cursor.execute(query, (admin_user_id, carrera_id))
-        row = cursor.fetchone()
+        carrera = (
+            Carrera.query
+            .filter_by(id=carrera_id, institucion_id=institucion_id)
+            .first()
+        )
 
-        cursor.close()
-        connection.close()
+        if carrera is None:
+            return None
 
-        return row
+        return {
+            "id": carrera.id,
+            "nombre": carrera.nombre,
+            "activa": int(carrera.activa),
+            "created_at": carrera.created_at,
+        }
 
     @staticmethod
     def set_activa_for_admin(admin_user_id, carrera_id, activa):
