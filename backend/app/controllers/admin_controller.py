@@ -1,4 +1,4 @@
-import mysql.connector
+from sqlalchemy.exc import IntegrityError
 
 from flask import request, g
 
@@ -48,8 +48,8 @@ class AdminController:
                 "carrera": carrera,
             }, 201
 
-        except mysql.connector.Error as error:
-            if error.errno == 1062:
+        except IntegrityError as error:
+            if getattr(error.orig, "errno", None) == 1062:
                 return {
                     "ok": False,
                     "message": "Ya existe una carrera con ese nombre en la institución",
@@ -131,8 +131,8 @@ class AdminController:
                 "carrera": carrera,
             }, 200
 
-        except mysql.connector.Error as error:
-            if error.errno == 1062:
+        except IntegrityError as error:
+            if getattr(error.orig, "errno", None) == 1062:
                 return {
                     "ok": False,
                     "message": "Ya existe una carrera con ese nombre en la institución",

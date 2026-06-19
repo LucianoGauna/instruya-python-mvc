@@ -1,6 +1,3 @@
-import mysql.connector
-
-from app.database import get_connection
 from app.extensions import db
 from app.models.usuario_model import Usuario
 
@@ -135,43 +132,24 @@ class CarreraModel:
         if not institucion_id:
             return None
 
-        connection = get_connection()
-        cursor = connection.cursor(dictionary=True)
+        carrera = (
+            Carrera.query
+            .filter_by(id=carrera_id, institucion_id=institucion_id)
+            .first()
+        )
+
+        if carrera is None:
+            return None
 
         try:
-            exists_query = """
-                SELECT id
-                FROM carrera
-                WHERE id = %s
-                  AND institucion_id = %s
-                LIMIT 1;
-            """
-
-            cursor.execute(exists_query, (carrera_id, institucion_id))
-            exists_row = cursor.fetchone()
-
-            if exists_row is None:
-                return None
-
-            update_query = """
-                UPDATE carrera
-                SET nombre = %s
-                WHERE id = %s
-                  AND institucion_id = %s;
-            """
-
-            cursor.execute(update_query, (nombre, carrera_id, institucion_id))
-            connection.commit()
+            carrera.nombre = nombre
+            db.session.commit()
 
             return {
-                "id": carrera_id,
-                "nombre": nombre,
+                "id": carrera.id,
+                "nombre": carrera.nombre,
             }
 
-        except mysql.connector.Error as error:
-            connection.rollback()
+        except Exception as error:
+            db.session.rollback()
             raise error
-
-        finally:
-            cursor.close()
-            connection.close()
