@@ -109,43 +109,24 @@ class CarreraModel:
         if not institucion_id:
             return False
 
-        connection = get_connection()
-        cursor = connection.cursor(dictionary=True)
+        carrera = (
+            Carrera.query
+            .filter_by(id=carrera_id, institucion_id=institucion_id)
+            .first()
+        )
+
+        if carrera is None:
+            return False
 
         try:
-            exists_query = """
-                SELECT id
-                FROM carrera
-                WHERE id = %s
-                  AND institucion_id = %s
-                LIMIT 1;
-            """
-
-            cursor.execute(exists_query, (carrera_id, institucion_id))
-            exists_row = cursor.fetchone()
-
-            if exists_row is None:
-                return False
-
-            update_query = """
-                UPDATE carrera
-                SET activa = %s
-                WHERE id = %s
-                  AND institucion_id = %s;
-            """
-
-            cursor.execute(update_query, (activa, carrera_id, institucion_id))
-            connection.commit()
+            carrera.activa = activa
+            db.session.commit()
 
             return True
 
-        except mysql.connector.Error as error:
-            connection.rollback()
+        except Exception as error:
+            db.session.rollback()
             raise error
-
-        finally:
-            cursor.close()
-            connection.close()
 
     @staticmethod
     def update_nombre_for_admin(admin_user_id, carrera_id, nombre):
