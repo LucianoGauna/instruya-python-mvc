@@ -14,3 +14,10 @@ class Config:
     DB_PORT = int(os.getenv("DB_PORT", 3306))
 
     JWT_SECRET = os.getenv("JWT_SECRET", "dev-secret")
+
+    SQLALCHEMY_DATABASE_URI = (
+        f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD}"
+        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
+
+    SQLALCHEMY_TRACK_MODIFICATIONS = False

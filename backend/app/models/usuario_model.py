@@ -1,28 +1,18 @@
-from app.database import get_connection
+from app.extensions import db
 
 
-class Usuario:
-    def __init__(
-        self,
-        id,
-        nombre,
-        apellido,
-        email,
-        contrasenia_hash,
-        rol,
-        institucion_id,
-        activo,
-        created_at,
-    ):
-        self.id = id
-        self.nombre = nombre
-        self.apellido = apellido
-        self.email = email
-        self.contrasenia_hash = contrasenia_hash
-        self.rol = rol
-        self.institucion_id = institucion_id
-        self.activo = activo
-        self.created_at = created_at
+class Usuario(db.Model):
+    __tablename__ = "usuario"
+
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    apellido = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(255), nullable=False)
+    contrasenia_hash = db.Column(db.String(255), nullable=False)
+    rol = db.Column(db.String(20), nullable=False)
+    institucion_id = db.Column(db.Integer, nullable=True)
+    activo = db.Column(db.Boolean, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=True)
 
     def esta_activo(self):
         return bool(self.activo)
@@ -31,42 +21,4 @@ class Usuario:
 class UsuarioModel:
     @staticmethod
     def find_by_email(email):
-        connection = get_connection()
-        cursor = connection.cursor(dictionary=True)
-
-        query = """
-            SELECT
-                id,
-                nombre,
-                apellido,
-                email,
-                contrasenia_hash,
-                rol,
-                institucion_id,
-                activo,
-                created_at
-            FROM usuario
-            WHERE email = %s
-            LIMIT 1;
-        """
-
-        cursor.execute(query, (email,))
-        row = cursor.fetchone()
-
-        cursor.close()
-        connection.close()
-
-        if row is None:
-            return None
-
-        return Usuario(
-            id=row["id"],
-            nombre=row["nombre"],
-            apellido=row["apellido"],
-            email=row["email"],
-            contrasenia_hash=row["contrasenia_hash"],
-            rol=row["rol"],
-            institucion_id=row["institucion_id"],
-            activo=row["activo"],
-            created_at=row["created_at"],
-        )
+        return Usuario.query.filter_by(email=email).first()
