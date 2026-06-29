@@ -95,3 +95,24 @@ def desactivar_materia(id):
 @require_role(["ADMIN"])
 def update_materia(id):
     return AdminController.update_materia(id)
+
+
+@admin_routes.get("/inscripciones/pendientes")
+@auth_required
+@require_role(["ADMIN"])
+def get_inscripciones_pendientes():
+    return AdminController.get_inscripciones_pendientes()
+
+
+@admin_routes.patch("/inscripciones/<int:inscripcion_id>/aceptar")
+@auth_required
+@require_role(["ADMIN"])
+def aceptar_inscripcion(inscripcion_id):
+    return AdminController.aceptar_inscripcion(inscripcion_id)
+
+
+@admin_routes.patch("/inscripciones/<int:inscripcion_id>/rechazar")
+@auth_required
+@require_role(["ADMIN"])
+def rechazar_inscripcion(inscripcion_id):
+    return AdminController.rechazar_inscripcion(inscripcion_id)

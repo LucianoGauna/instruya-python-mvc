@@ -5,7 +5,7 @@ from flask import request, g
 from app.services.carrera_service import CarreraService
 from app.services.docente_service import DocenteService
 from app.services.materia_service import MateriaService
-from app.services.admin_service import AdminService
+from app.services.admin_service import AdminService, PERIODOS_VALIDOS
 
 
 class AdminController:
@@ -471,6 +471,117 @@ class AdminController:
 
         except Exception as error:
             print("Error en get_dashboard_resumen:", error)
+
+            return {
+                "ok": False,
+                "message": "Error interno en el servidor",
+            }, 500
+        
+    @staticmethod
+    def get_inscripciones_pendientes():
+        try:
+            pendientes = AdminService.get_inscripciones_pendientes()
+
+            return {
+                "ok": True,
+                "pendientes": pendientes,
+            }, 200
+
+        except Exception as error:
+            print("Error en get_inscripciones_pendientes:", error)
+
+            return {
+                "ok": False,
+                "message": "Error interno en el servidor",
+            }, 500
+
+    @staticmethod
+    def aceptar_inscripcion(inscripcion_id):
+        data = request.get_json() or {}
+
+        anio = data.get("anio")
+        periodo = data.get("periodo")
+
+        try:
+            anio = int(anio)
+        except (TypeError, ValueError):
+            return {
+                "ok": False,
+                "message": "anio inválido",
+            }, 400
+
+        if not isinstance(periodo, str) or periodo not in PERIODOS_VALIDOS:
+            return {
+                "ok": False,
+                "message": "periodo inválido",
+            }, 400
+
+        try:
+            result = AdminService.aceptar_inscripcion(
+                inscripcion_id,
+                anio,
+                periodo,
+            )
+
+            if result == "ANIO_INVALIDO":
+                return {
+                    "ok": False,
+                    "message": "anio inválido",
+                }, 400
+
+            if result == "PERIODO_INVALIDO":
+                return {
+                    "ok": False,
+                    "message": "periodo inválido",
+                }, 400
+
+            if result == "NOT_FOUND":
+                return {
+                    "ok": False,
+                    "message": "Inscripción no encontrada",
+                }, 404
+
+            if result == "NOT_PENDIENTE":
+                return {
+                    "ok": False,
+                    "message": "La inscripción no está pendiente",
+                }, 409
+
+            return {
+                "ok": True,
+            }, 200
+
+        except Exception as error:
+            print("Error en aceptar_inscripcion:", error)
+
+            return {
+                "ok": False,
+                "message": "Error interno en el servidor",
+            }, 500
+
+    @staticmethod
+    def rechazar_inscripcion(inscripcion_id):
+        try:
+            result = AdminService.rechazar_inscripcion(inscripcion_id)
+
+            if result == "NOT_FOUND":
+                return {
+                    "ok": False,
+                    "message": "Inscripción no encontrada",
+                }, 404
+
+            if result == "NOT_PENDIENTE":
+                return {
+                    "ok": False,
+                    "message": "La inscripción no está pendiente",
+                }, 409
+
+            return {
+                "ok": True,
+            }, 200
+
+        except Exception as error:
+            print("Error en rechazar_inscripcion:", error)
 
             return {
                 "ok": False,
