@@ -47,3 +47,45 @@ def activar_carrera(id):
 @require_role(["ADMIN"])
 def desactivar_carrera(id):
     return AdminController.desactivar_carrera(id)
+
+
+@admin_routes.get("/docentes")
+@auth_required
+@require_role(["ADMIN"])
+def get_docentes():
+    return AdminController.get_docentes()
+
+
+@admin_routes.get("/carreras/<int:id>/materias")
+@auth_required
+@require_role(["ADMIN"])
+def get_materias_de_carrera(id):
+    return AdminController.get_materias_de_carrera(id)
+
+
+@admin_routes.post("/carreras/<int:id>/materias")
+@auth_required
+@require_role(["ADMIN"])
+def create_materia_en_carrera(id):
+    return AdminController.create_materia_en_carrera(id)
+
+
+@admin_routes.patch("/materias/<int:id>/activar")
+@auth_required
+@require_role(["ADMIN"])
+def activar_materia(id):
+    return AdminController.activar_materia(id)
+
+
+@admin_routes.patch("/materias/<int:id>/desactivar")
+@auth_required
+@require_role(["ADMIN"])
+def desactivar_materia(id):
+    return AdminController.desactivar_materia(id)
+
+
+@admin_routes.patch("/materias/<int:id>")
+@auth_required
+@require_role(["ADMIN"])
+def update_materia(id):
+    return AdminController.update_materia(id)
