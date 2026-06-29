@@ -7,6 +7,7 @@ from app.routes.health_routes import health_routes
 from app.routes.auth_routes import auth_routes
 from app.routes.admin_routes import admin_routes
 from app.routes.superadmin_routes import superadmin_routes
+from app.routes.alumno_routes import alumno_routes
 
 
 def create_app():
@@ -20,5 +21,6 @@ def create_app():
     app.register_blueprint(auth_routes, url_prefix="/auth")
     app.register_blueprint(admin_routes, url_prefix="/admin")
     app.register_blueprint(superadmin_routes, url_prefix="/superadmin")
+    app.register_blueprint(alumno_routes, url_prefix="/alumno")
 
     return app

@@ -39,6 +39,7 @@ class AlumnoPerfil(db.Model):
     __tablename__ = "alumno_perfil"
 
     usuario_id = db.Column(db.Integer, primary_key=True)
+    carrera_id = db.Column(db.Integer, nullable=True)
     legajo = db.Column(db.String(50), nullable=True)
     cohorte = db.Column(db.Integer, nullable=True)
 
