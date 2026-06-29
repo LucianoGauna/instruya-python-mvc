@@ -6,6 +6,12 @@ from app.middlewares.role_middleware import require_role
 
 admin_routes = Blueprint("admin_routes", __name__)
 
+@admin_routes.get("/dashboard/resumen")
+@auth_required
+@require_role(["ADMIN"])
+def get_dashboard_resumen():
+    return AdminController.get_dashboard_resumen()
+
 
 @admin_routes.get("/carreras")
 @auth_required

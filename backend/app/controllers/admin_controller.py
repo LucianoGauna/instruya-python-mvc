@@ -5,6 +5,7 @@ from flask import request, g
 from app.services.carrera_service import CarreraService
 from app.services.docente_service import DocenteService
 from app.services.materia_service import MateriaService
+from app.services.admin_service import AdminService
 
 
 class AdminController:
@@ -445,6 +446,31 @@ class AdminController:
 
         except Exception as error:
             print("Error en update_materia:", error)
+
+            return {
+                "ok": False,
+                "message": "Error interno en el servidor",
+            }, 500
+        
+    @staticmethod
+    def get_dashboard_resumen():
+        try:
+            admin_user_id = g.user["id"]
+            resumen = AdminService.get_dashboard_resumen(admin_user_id)
+
+            if resumen is None:
+                return {
+                    "ok": False,
+                    "message": "No se encontró institución para este admin",
+                }, 404
+
+            return {
+                "ok": True,
+                "resumen": resumen,
+            }, 200
+
+        except Exception as error:
+            print("Error en get_dashboard_resumen:", error)
 
             return {
                 "ok": False,
