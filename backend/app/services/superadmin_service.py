@@ -29,3 +29,25 @@ class SuperadminService:
     @staticmethod
     def desactivar_institucion(id):
         return SuperadminModel.set_institucion_activa(id, False)
+    
+    @staticmethod
+    def create_admin_en_institucion(institucion_id, nombre, apellido, email, contrasenia):
+        return SuperadminModel.create_admin_en_institucion(
+            institucion_id,
+            nombre,
+            apellido,
+            email,
+            contrasenia,
+        )
+
+    @staticmethod
+    def get_admins_by_institucion(institucion_id):
+        return SuperadminModel.find_admins_by_institucion(institucion_id)
+
+    @staticmethod
+    def activar_admin(admin_id):
+        return SuperadminModel.set_admin_activo_by_id(admin_id, True)
+
+    @staticmethod
+    def desactivar_admin(admin_id):
+        return SuperadminModel.set_admin_activo_by_id(admin_id, False)

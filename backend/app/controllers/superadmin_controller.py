@@ -241,3 +241,147 @@ class SuperadminController:
                 "ok": False,
                 "message": "Error interno en el servidor",
             }, 500
+        
+    @staticmethod
+    def create_admin_en_institucion(id):
+        institucion_id = int(id)
+        data = request.get_json() or {}
+
+        nombre = str(data.get("nombre") or "").strip()
+        apellido = str(data.get("apellido") or "").strip()
+        email = str(data.get("email") or "").strip()
+        contrasenia = str(data.get("contrasenia") or "")
+
+        if not nombre or not apellido or not email or not contrasenia:
+            return {
+                "ok": False,
+                "message": "Faltan campos requeridos",
+            }, 400
+
+        if not is_valid_email(email):
+            return {
+                "ok": False,
+                "message": "Email inválido",
+            }, 400
+
+        if len(contrasenia) < 6:
+            return {
+                "ok": False,
+                "message": "La contraseña debe tener al menos 6 caracteres",
+            }, 400
+
+        try:
+            result = SuperadminService.create_admin_en_institucion(
+                institucion_id,
+                nombre,
+                apellido,
+                email,
+                contrasenia,
+            )
+
+            if result == "INSTITUCION_NOT_FOUND":
+                return {
+                    "ok": False,
+                    "message": "Institución no encontrada",
+                }, 404
+
+            if result == "INSTITUCION_INACTIVA":
+                return {
+                    "ok": False,
+                    "message": "La institución está inactiva",
+                }, 409
+
+            if result == "ADMIN_EMAIL_DUP":
+                return {
+                    "ok": False,
+                    "message": "Ya existe un usuario con ese email",
+                }, 409
+
+            return {
+                "ok": True,
+                **result,
+            }, 201
+
+        except Exception as error:
+            print("Error en create_admin_en_institucion:", error)
+
+            return {
+                "ok": False,
+                "message": "Error interno en el servidor",
+            }, 500
+
+    @staticmethod
+    def get_admins_by_institucion(id):
+        institucion_id = int(id)
+
+        try:
+            admins = SuperadminService.get_admins_by_institucion(institucion_id)
+
+            if admins is None:
+                return {
+                    "ok": False,
+                    "message": "Institución no encontrada",
+                }, 404
+
+            return {
+                "ok": True,
+                "admins": admins,
+            }, 200
+
+        except Exception as error:
+            print("Error en get_admins_by_institucion:", error)
+
+            return {
+                "ok": False,
+                "message": "Error interno en el servidor",
+            }, 500
+
+    @staticmethod
+    def activar_admin(admin_id):
+        admin_id = int(admin_id)
+
+        try:
+            updated = SuperadminService.activar_admin(admin_id)
+
+            if not updated:
+                return {
+                    "ok": False,
+                    "message": "Administrador no encontrado",
+                }, 404
+
+            return {
+                "ok": True,
+            }, 200
+
+        except Exception as error:
+            print("Error en activar_admin:", error)
+
+            return {
+                "ok": False,
+                "message": "Error interno en el servidor",
+            }, 500
+
+    @staticmethod
+    def desactivar_admin(admin_id):
+        admin_id = int(admin_id)
+
+        try:
+            updated = SuperadminService.desactivar_admin(admin_id)
+
+            if not updated:
+                return {
+                    "ok": False,
+                    "message": "Administrador no encontrado",
+                }, 404
+
+            return {
+                "ok": True,
+            }, 200
+
+        except Exception as error:
+            print("Error en desactivar_admin:", error)
+
+            return {
+                "ok": False,
+                "message": "Error interno en el servidor",
+            }, 500
