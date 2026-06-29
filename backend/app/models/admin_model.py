@@ -13,6 +13,14 @@ class Institucion(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(255), nullable=False)
+    direccion = db.Column(db.String(255), nullable=True)
+    activa = db.Column(db.Boolean, nullable=False)
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        server_default=db.text("CURRENT_TIMESTAMP"),
+    )
 
 
 class InscripcionMateria(db.Model):

@@ -12,7 +12,11 @@ class Usuario(db.Model):
     rol = db.Column(db.String(20), nullable=False)
     institucion_id = db.Column(db.Integer, nullable=True)
     activo = db.Column(db.Boolean, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        server_default=db.text("CURRENT_TIMESTAMP"),
+    )
 
     def esta_activo(self):
         return bool(self.activo)
