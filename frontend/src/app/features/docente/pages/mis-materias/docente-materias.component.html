@@ -1,0 +1,46 @@
+<div class="flex flex-col gap-5">
+  <div class="w-full flex items-center justify-between">
+    <p-button
+      text
+      rounded
+      severity="secondary"
+      styleClass="!w-5 hover:!bg-transparent !border-none"
+      icon="pi pi-arrow-left"
+      (onClick)="goBack()"
+    ></p-button>
+
+    <h1 class="text-2xl sm:text-4xl font-semibold font-lato">
+      Mis materias (Docente)
+    </h1>
+  </div>
+
+  @if (loading()) {
+    <p>Cargando...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+  } @else {
+    @if (materias().length === 0) {
+      <p>No tenés materias asignadas.</p>
+    } @else {
+      <div class="grid grid-cols-1 gap-3 xl:grid-cols-2">
+        @for (m of materias(); track m.materia_id) {
+          <div
+            class="rounded-2xl bg-gray-50 shadow-md p-4 flex items-center justify-between gap-4"
+          >
+            <div>
+              <div class="font-medium">{{ m.materia_nombre }}</div>
+              <div class="text-sm text-gray-600">{{ m.carrera_nombre }}</div>
+            </div>
+
+            <p-button
+              label="Ver inscriptos"
+              icon="pi pi-users"
+              size="small"
+              (onClick)="verInscriptos(m)"
+            ></p-button>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

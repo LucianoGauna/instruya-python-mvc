@@ -1,0 +1,95 @@
+<p-toast></p-toast>
+<div
+  class="relative h-screen lg:min-h-0 bg-surface-0 dark:bg-surface-900 flex lg:flex-row flex-col"
+>
+  <div
+    class="flex lg:flex lg:flex-row flex-col justify-center md:justify-normal h-full flex-1"
+  >
+    <div class="relative flex-1 z-20 flex items-center justify-center">
+      <div class="flex items-center justify-center h-full">
+        <div
+          class="w-full max-w-4xl lg:max-w-2xl px-6 py-12 lg:p-12 xl:p-16 text-center lg:text-left"
+        >
+          <h1
+            class="text-5xl xl:text-6xl font-bold text-surface-0 lg:text-surface-900 dark:text-surface-0 leading-tight!"
+          >
+            <span class="block font-lato">Instruya</span>
+          </h1>
+
+          <p
+            class="text-surface-0/90 opacity-70 lg:text-surface-700 dark:text-surface-200 text-xl leading-normal mb-8 max-w-sm"
+          >
+            Plataforma de gestión académica para simplificar tu día a día: cursadas, inscripciones, notas y administración.
+          </p>
+
+          <div class="flex items-center gap-4 justify-center lg:justify-start">
+            <form
+              class="w-full flex flex-col gap-3"
+              [formGroup]="form"
+              (ngSubmit)="submit()"
+            >
+              <h2 class="text-2xl font-bold">Iniciar sesión</h2>
+
+              <div class="flex flex-col items-start justify-start">
+                <label class="block mb-1">Email</label>
+                <input
+                  pInputText
+                  type="email"
+                  formControlName="email"
+                  class="w-full"
+                />
+                @if (form.get("email")?.invalid && form.get("email")?.touched) {
+                  <small class="text-red-600">
+                    @if (form.get("email")?.errors?.["required"]) {
+                      El email es requerido.
+                    } @else if (form.get("email")?.errors?.["email"]) {
+                      Formato de email inválido.
+                    }
+                  </small>
+                }
+              </div>
+
+              <div class="flex flex-col items-start justify-start">
+                <label class="block mb-1">Contraseña</label>
+                <input
+                  pInputText
+                  type="password"
+                  formControlName="password"
+                  class="w-full"
+                />
+                @if (
+                  form.get("password")?.invalid && form.get("password")?.touched
+                ) {
+                  <small class="text-red-600"
+                    >La contraseña es requerida.</small
+                  >
+                }
+              </div>
+
+              <button
+                pButton
+                type="submit"
+                label="Entrar"
+                class="w-full"
+                [disabled]="form.invalid || loading()"
+              ></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="absolute hidden lg:flex lg:relative inset-0 lg:inset-auto flex-1"
+    >
+      <div
+        class="absolute lg:hidden inset-0 bg-surface-900/60 dark:bg-surface-900/80 z-10"
+      ></div>
+      <img
+        src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        alt="hero-1"
+        class="h-full w-full object-cover xl:[clip-path:polygon(12%_0,100%_0%,100%_100%,0_100%)]"
+      />
+    </div>
+  </div>
+</div>

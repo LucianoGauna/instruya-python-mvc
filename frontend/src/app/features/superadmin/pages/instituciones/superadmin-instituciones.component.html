@@ -1,0 +1,372 @@
+<p-toast></p-toast>
+
+<div class="flex flex-col gap-5">
+  <h1 class="text-2xl sm:text-4xl font-lato font-semibold">Instituciones</h1>
+
+  <div class="rounded-2xl bg-gray-50 shadow-md p-4 mb-6">
+    <div class="font-medium mb-3">Crear institución + admin</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <input
+        pInputText
+        type="text"
+        placeholder="Nombre institución"
+        [ngModel]="nombreInst()"
+        (ngModelChange)="nombreInst.set($event)"
+      />
+      <input
+        pInputText
+        type="email"
+        placeholder="Email institución"
+        [ngModel]="emailInst()"
+        (ngModelChange)="emailInst.set($event)"
+      />
+      <input
+        pInputText
+        type="text"
+        placeholder="Dirección"
+        class="md:col-span-2"
+        [ngModel]="direccionInst()"
+        (ngModelChange)="direccionInst.set($event)"
+      />
+      <input
+        pInputText
+        type="text"
+        placeholder="Nombre admin"
+        [ngModel]="adminNombre()"
+        (ngModelChange)="adminNombre.set($event)"
+      />
+      <input
+        pInputText
+        type="text"
+        placeholder="Apellido admin"
+        [ngModel]="adminApellido()"
+        (ngModelChange)="adminApellido.set($event)"
+      />
+      <input
+        pInputText
+        type="email"
+        placeholder="Email admin"
+        [ngModel]="adminEmail()"
+        (ngModelChange)="adminEmail.set($event)"
+      />
+      <input
+        pInputText
+        type="password"
+        placeholder="Contraseña admin"
+        [ngModel]="adminPass()"
+        (ngModelChange)="adminPass.set($event)"
+      />
+    </div>
+
+    <div class="mt-4 w-full flex justify-end">
+      <p-button
+        label="Crear"
+        icon="pi pi-plus"
+        [loading]="creating()"
+        [disabled]="creating()"
+        (onClick)="create()"
+      ></p-button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p>Cargando...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+  } @else {
+    @if (instituciones().length === 0) {
+      <p>No hay instituciones cargadas.</p>
+    } @else {
+      <div class="grid grid-cols-1 gap-3 xl:grid-cols-2">
+        @for (i of instituciones(); track i.id) {
+          <div
+            class="rounded-2xl bg-gray-50 shadow-md p-4 flex items-center justify-between gap-4"
+          >
+            <div class="flex-1">
+              @if (editingId() === i.id) {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <input
+                    pInputText
+                    type="text"
+                    placeholder="Nombre"
+                    [ngModel]="editNombre()"
+                    (ngModelChange)="editNombre.set($event)"
+                  />
+                  <input
+                    pInputText
+                    type="email"
+                    placeholder="Email"
+                    [ngModel]="editEmail()"
+                    (ngModelChange)="editEmail.set($event)"
+                  />
+                  <input
+                    pInputText
+                    type="text"
+                    class="md:col-span-2"
+                    placeholder="Dirección"
+                    [ngModel]="editDireccion()"
+                    (ngModelChange)="editDireccion.set($event)"
+                  />
+                </div>
+              } @else {
+                <div class="font-medium">{{ i.nombre }}</div>
+                <div class="text-sm text-gray-600">{{ i.email }}</div>
+                <div class="text-sm text-gray-600">
+                  {{ i.direccion ?? "Sin dirección" }}
+                </div>
+                <div class="text-sm text-gray-600">
+                  Estado: {{ isActiva(i) ? "Activa" : "Inactiva" }}
+                </div>
+              }
+            </div>
+
+            <div class="flex items-center gap-2">
+              @if (editingId() === i.id) {
+                <p-button
+                  rounded
+                  size="small"
+                  icon="pi pi-check"
+                  severity="success"
+                  [disabled]="updatingId() === i.id"
+                  (onClick)="saveEdit(i)"
+                ></p-button>
+                <p-button
+                  rounded
+                  size="small"
+                  icon="pi pi-times"
+                  severity="danger"
+                  [disabled]="updatingId() === i.id"
+                  (onClick)="cancelEdit()"
+                ></p-button>
+              } @else {
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-users"
+                  severity="help"
+                  pTooltip="Ver admins"
+                  positionTop="-2"
+                  tooltipPosition="top"
+                  [disabled]="updatingId() === i.id"
+                  (onClick)="openViewAdminsDialog(i)"
+                ></p-button>
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-user-plus"
+                  severity="info"
+                  pTooltip="Crear admin"
+                  positionTop="-2"
+                  tooltipPosition="top"
+                  [disabled]="updatingId() === i.id"
+                  (onClick)="openAdminDialog(i)"
+                ></p-button>
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-pencil"
+                  severity="secondary"
+                  pTooltip="Editar"
+                  positionTop="-2"
+                  tooltipPosition="top"
+                  [disabled]="updatingId() === i.id"
+                  (onClick)="startEdit(i)"
+                ></p-button>
+                @if (isActiva(i)) {
+                  <p-button
+                    text
+                    rounded
+                    size="small"
+                    icon="pi pi-eye-slash"
+                    severity="danger"
+                    pTooltip="Descactivar"
+                    positionTop="-2"
+                    tooltipPosition="top"
+                    [disabled]="updatingId() === i.id"
+                    (onClick)="desactivar(i)"
+                  ></p-button>
+                } @else {
+                  <p-button
+                    text
+                    rounded
+                    size="small"
+                    icon="pi pi-eye"
+                    severity="success"
+                    pTooltip="Activar"
+                    positionTop="-2"
+                    tooltipPosition="top"
+                    [disabled]="updatingId() === i.id"
+                    (onClick)="activar(i)"
+                  ></p-button>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <p-dialog
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [closable]="!creatingAdmin()"
+    [visible]="adminDialogVisible()"
+    [style]="{ width: '32rem', maxWidth: '95vw' }"
+    (visibleChange)="adminDialogVisible.set($event)"
+    (onHide)="closeAdminDialog()"
+  >
+    <ng-template pTemplate="header">
+      <p class="font-lato text-2xl font-bold">Crear admininistrador</p>
+    </ng-template>
+    @if (adminTargetInstitucion()) {
+      <div class="mb-3 text-sm text-gray-700">
+        Institución:
+        <span class="font-bold">{{ adminTargetInstitucion()!.nombre }}</span>
+      </div>
+    }
+
+    <div class="grid grid-cols-1 gap-3">
+      <input
+        pInputText
+        type="text"
+        placeholder="Nombre"
+        [ngModel]="newAdminNombre()"
+        (ngModelChange)="newAdminNombre.set($event)"
+      />
+      <input
+        pInputText
+        type="text"
+        placeholder="Apellido"
+        [ngModel]="newAdminApellido()"
+        (ngModelChange)="newAdminApellido.set($event)"
+      />
+      <input
+        pInputText
+        type="email"
+        placeholder="Email"
+        [ngModel]="newAdminEmail()"
+        (ngModelChange)="newAdminEmail.set($event)"
+      />
+      <input
+        pInputText
+        type="password"
+        placeholder="Contraseña (mínimo 6 caracteres)"
+        [ngModel]="newAdminPass()"
+        (ngModelChange)="newAdminPass.set($event)"
+      />
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="flex justify-end gap-2">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          [disabled]="creatingAdmin()"
+          (onClick)="closeAdminDialog()"
+        ></p-button>
+        <p-button
+          label="Crear admin"
+          icon="pi pi-check"
+          [loading]="creatingAdmin()"
+          [disabled]="creatingAdmin()"
+          (onClick)="createAdmin()"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [visible]="viewAdminsDialogVisible()"
+    [style]="{ width: '38rem', maxWidth: '95vw' }"
+    (visibleChange)="viewAdminsDialogVisible.set($event)"
+    (onHide)="closeViewAdminsDialog()"
+  >
+    <ng-template pTemplate="header">
+      <p class="font-lato text-2xl font-bold">Administradores</p>
+    </ng-template>
+
+    @if (viewAdminsTargetInstitucion()) {
+      <div class="mb-3 text-sm text-gray-700">
+        Institución:
+        <span class="font-bold">{{
+          viewAdminsTargetInstitucion()!.nombre
+        }}</span>
+      </div>
+    }
+
+    @if (loadingAdmins()) {
+      <p>Cargando...</p>
+    } @else if (adminsError()) {
+      <p class="text-red-600">{{ adminsError() }}</p>
+    } @else if (admins().length === 0) {
+      <p>No hay administradores cargados.</p>
+    } @else {
+      <div class="space-y-2 max-h-96 overflow-auto pr-1">
+        @for (a of admins(); track a.id) {
+          <div
+            class="rounded-lg border p-3 flex items-center justify-between gap-3"
+          >
+            <div>
+              <div class="font-medium">{{ a.apellido }}, {{ a.nombre }}</div>
+              <div class="text-sm text-gray-600">{{ a.email }}</div>
+              <div class="text-sm text-gray-600">
+                Estado: {{ a.activo === 1 ? "Activo" : "Inactivo" }}
+              </div>
+            </div>
+
+            <div>
+              @if (a.activo === 1) {
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-eye-slash"
+                  severity="danger"
+                  tooltipPosition="top"
+                  positionTop="-5"
+                  pTooltip="Desactivar"
+                  [loading]="updatingAdminId() === a.id"
+                  [disabled]="updatingAdminId() === a.id"
+                  (onClick)="toggleAdminActivo(a)"
+                ></p-button>
+              } @else {
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-eye"
+                  severity="success"
+                  tooltipPosition="top"
+                  positionTop="-5"
+                  pTooltip="Activar"
+                  [loading]="updatingAdminId() === a.id"
+                  [disabled]="updatingAdminId() === a.id"
+                  (onClick)="toggleAdminActivo(a)"
+                ></p-button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <ng-template pTemplate="footer">
+      <div class="flex justify-end">
+        <p-button
+          label="Cerrar"
+          severity="secondary"
+          (onClick)="closeViewAdminsDialog()"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>

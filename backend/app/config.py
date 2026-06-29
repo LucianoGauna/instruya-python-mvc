@@ -5,7 +5,7 @@ load_dotenv()
 
 
 class Config:
-    PORT = int(os.getenv("PORT", 5000))
+    PORT = int(os.getenv("PORT", 3000))
 
     DB_HOST = os.getenv("DB_HOST", "localhost")
     DB_USER = os.getenv("DB_USER", "root")

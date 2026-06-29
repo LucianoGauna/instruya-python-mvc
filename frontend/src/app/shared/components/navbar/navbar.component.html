@@ -1,0 +1,10 @@
+<p-toolbar class="w-full h-16 shadow bg-white fixed top-0 left-0 z-100">
+    <ng-template #start>
+        <p-button [icon]="isSidebarOpen() ? 'pi pi-times' : 'pi pi-bars'" text severity="secondary" (click)="openSidebar()"/>
+    </ng-template>
+    <ng-template #end>
+        <div class="cursor-pointer hover:underline text-platinum-600" (click)="logout()">
+            <p>Cerrar sesión</p>
+        </div>
+    </ng-template>
+</p-toolbar>

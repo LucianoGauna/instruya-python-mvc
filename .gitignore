@@ -12,3 +12,11 @@ venv/
 
 # macOS
 .DS_Store
+
+#Frontend
+frontend/.angular/
+frontend/node_modules/
+frontend/dist/
+.angular/
+node_modules/
+dist/

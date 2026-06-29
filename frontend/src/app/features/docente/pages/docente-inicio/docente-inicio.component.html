@@ -1,0 +1,67 @@
+<div class="flex flex-col gap-5">
+  <h1 class="text-2xl sm:text-4xl font-lato font-semibold">
+    Dashboard Docente
+  </h1>
+
+  @if (loading()) {
+    <p>Cargando resumen...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+  } @else if (!resumen()) {
+    <p>No hay datos disponibles.</p>
+  } @else {
+    <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+      <p class="text-gray-700">
+        Bienvenido
+        @if (user()) {
+          <span class="font-semibold">{{ user()!.email }}</span>
+        }
+        .
+      </p>
+      <p class="text-gray-700 mt-1">
+        Institución:
+        <span class="font-semibold">
+          {{ resumen()!.institucion?.nombre ?? "Sin institución" }}
+        </span>
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+      <div class="h-30 rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Materias a cargo</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.materias.total }}
+        </div>
+      </div>
+
+      <div class="h-30 rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Carreras donde dicta</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.materias.carreras }}
+        </div>
+      </div>
+
+      <div class="h-30 rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Alumnos únicos inscriptos</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.alumnos.unicos_inscriptos }}
+        </div>
+      </div>
+
+      <div class="h-30 rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Inscripciones aceptadas</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.alumnos.inscripciones_aceptadas }}
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end">
+      <p-button
+        label="Ver mis materias"
+        icon="pi pi-book"
+        (onClick)="goToMisMaterias()"
+      ></p-button>
+    </div>
+  }
+</div>

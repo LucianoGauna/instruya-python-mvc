@@ -1,0 +1,160 @@
+<p-toast></p-toast>
+<div class="flex flex-col gap-5">
+  <div class="w-full flex items-center justify-between">
+    <p-button
+      text
+      rounded
+      severity="secondary"
+      styleClass="!w-5 hover:!bg-transparent !border-none"
+      icon="pi pi-arrow-left"
+      (onClick)="goBack()"
+    ></p-button>
+
+    <h1 class="text-2xl sm:text-4xl font-semibold font-lato">Carreras</h1>
+  </div>
+
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center justify-end">
+    <input
+      pInputText
+      size="small"
+      type="text"
+      placeholder="Nombre de la nueva carrera"
+      class="w-full"
+      [ngModel]="nuevoNombre()"
+      (ngModelChange)="nuevoNombre.set($event)"
+    />
+
+    <p-button
+      label="Crear"
+      icon="pi pi-plus"
+      [disabled]="creating()"
+      (onClick)="create()"
+    ></p-button>
+  </div>
+
+  <div>
+    <p-selectbutton
+      optionLabel="label"
+      optionValue="value"
+      ariaLabel="Filtro de carreras"
+      [options]="filterOptions"
+      [(ngModel)]="selectedFilter"
+    ></p-selectbutton>
+  </div>
+
+  @if (loading()) {
+    <p>Cargando...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+  } @else {
+    @if (carreras().length === 0) {
+      <p>No hay carreras cargadas.</p>
+    } @else {
+      <div class="grid grid-cols-1 gap-3 xl:grid-cols-2">
+        @for (c of carrerasFiltradas(); track c.id) {
+          <div
+            class="rounded-2xl bg-gray-50 shadow-md p-4 flex items-center justify-between"
+          >
+            <div class="flex-1">
+              @if (editingId() === c.id) {
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    pInputText
+                    type="text"
+                    class="w-full"
+                    [ngModel]="editNombre()"
+                    (ngModelChange)="editNombre.set($event)"
+                  />
+                  <div class="flex gap-2">
+                    <p-button
+                      rounded
+                      size="small"
+                      icon="pi pi-check"
+                      severity="success"
+                      [disabled]="updatingId() === c.id"
+                      (onClick)="saveEdit(c)"
+                    ></p-button>
+
+                    <p-button
+                      rounded
+                      size="small"
+                      icon="pi pi-times"
+                      severity="danger"
+                      [disabled]="updatingId() === c.id"
+                      (onClick)="cancelEdit()"
+                    ></p-button>
+                  </div>
+                </div>
+              } @else {
+                <div class="font-medium text-lg">{{ c.nombre }}</div>
+                <div class="text-sm text-gray-600">
+                  Estado:
+                  <span>{{ isActiva(c) ? "Activa" : "Inactiva" }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="flex items-center gap-2">
+              @if (editingId() !== c.id) {
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-pencil"
+                  severity="secondary"
+                  pTooltip="Editar carrera"
+                  tooltipPosition="left"
+                  positionLeft="-5"
+                  [disabled]="updatingId() === c.id"
+                  (onClick)="startEdit(c)"
+                ></p-button>
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-book"
+                  severity="secondary"
+                  pTooltip="Ver materias"
+                  tooltipPosition="left"
+                  positionLeft="-5"
+                  [disabled]="updatingId() === c.id"
+                  (onClick)="verMaterias(c)"
+                ></p-button>
+              }
+              @if (isActiva(c)) {
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-eye-slash"
+                  severity="danger"
+                  pTooltip="Desactivar carrera"
+                  tooltipPosition="left"
+                  positionLeft="-5"
+                  [disabled]="updatingId() === c.id"
+                  (onClick)="desactivar(c)"
+                ></p-button>
+              } @else {
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-eye"
+                  severity="success"
+                  pTooltip="Activar carrera"
+                  tooltipPosition="left"
+                  positionLeft="-5"
+                  [disabled]="updatingId() === c.id"
+                  (onClick)="activar(c)"
+                ></p-button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+      @if (carrerasFiltradas().length === 0) {
+        <p class="text-gray-600 mt-2">No hay carreras para este filtro.</p>
+      }
+    }
+  }
+</div>

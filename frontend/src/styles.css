@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@import "primeicons/primeicons.css";
+
+.font-sans {
+  font-family: "Nunito Sans", ui-sans-serif, system-ui;
+}
+
+.font-lato {
+  font-family: "Lato", ui-sans-serif, system-ui;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE/Edge legacy */
+  scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Edge/Safari */
+}
+
+@theme {
+  --color-platinum-50: #edf2f7;
+  --color-platinum-100: #dbe6f0;
+  --color-platinum-200: #b8cce0;
+  --color-platinum-300: #94b2d1;
+  --color-platinum-400: #7099c2;
+  --color-platinum-500: #4d7fb3;
+  --color-platinum-600: #3d668f;
+  --color-platinum-700: #2e4c6b;
+  --color-platinum-800: #1f3347;
+  --color-platinum-900: #0f1924;
+  --color-platinum-950: #0b1219;
+}

@@ -1,0 +1,10 @@
+<app-navbar
+  [isSidebarOpen]="sidebarOpen()"
+  (clickBars)="toggleSidebar()"
+></app-navbar>
+
+<app-sidebar [open]="sidebarOpen()" [menuItems]="menuItems()"></app-sidebar>
+
+<main class="h-full duration-300 p-8 pt-20 ml-0" [class.sm:ml-64]="sidebarOpen()">
+  <router-outlet></router-outlet>
+</main>

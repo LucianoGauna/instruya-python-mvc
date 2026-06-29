@@ -1,0 +1,22 @@
+<div
+  class="fixed left-0 top-17 h-[calc(100vh-4rem)] bg-white text-[#0a0a0a] overflow-hidden duration-300 z-100 shadow-sm"
+  [class.w-full]="open()"
+  [class.w-0]="!open()"
+  [class.sm:w-64]="open()"
+  [class.sm:w-0]="!open()"
+>
+  <ul class="space-y-2 px-4 mt-6">
+    @for (item of menuItems(); track item.label) {
+    <li
+      class="flex items-center space-x-3 p-2 rounded hover:bg-platinum-100 cursor-pointer duration-200"
+      (click)="navigate(item.route)"
+    >
+      <i class="{{ item.icon }} text-lg"></i>
+      @if (open()) {
+      <span class="whitespace-nowrap text-sm">{{ item.label }}</span>
+      }
+    </li>
+
+    }
+  </ul>
+</div>

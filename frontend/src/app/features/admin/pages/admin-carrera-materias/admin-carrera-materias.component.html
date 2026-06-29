@@ -1,0 +1,176 @@
+<p-toast></p-toast>
+<div class="flex flex-col gap-5">
+  <div class="w-full flex items-center justify-between">
+    <p-button
+      text
+      rounded
+      severity="secondary"
+      icon="pi pi-arrow-left"
+      styleClass="!w-5 hover:!bg-transparent !border-none"
+      (onClick)="goBack()"
+    ></p-button>
+
+    <h1 class="text-lg sm:text-xl md:text-3xl font-lato font-semibold">
+      Materias – {{ carreraNombre() ?? "Carrera #" + carreraId() }}
+    </h1>
+  </div>
+
+  <div class="rounded-lg border p-4 mb-6">
+    <div class="font-medium mb-3">Crear materia</div>
+
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <input
+        pInputText
+        type="text"
+        class="w-full"
+        placeholder="Nombre de la materia"
+        [ngModel]="nuevoNombre()"
+        (ngModelChange)="nuevoNombre.set($event)"
+      />
+
+      <p-dropdown
+        class="w-full sm:w-96"
+        placeholder="Seleccionar docente"
+        optionLabel="label"
+        optionValue="id"
+        [options]="docentes()"
+        [ngModel]="docenteSeleccionadoId()"
+        (ngModelChange)="docenteSeleccionadoId.set($event)"
+      ></p-dropdown>
+
+      <p-button
+        label="Crear"
+        icon="pi pi-plus"
+        [disabled]="creating()"
+        (onClick)="createMateria()"
+      ></p-button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p>Cargando...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+  } @else {
+    @if (materias().length === 0) {
+      <p>No hay materias en esta carrera.</p>
+    } @else {
+      <div class="grid grid-cols-1 gap-3 xl:grid-cols-2">
+        @for (m of materias(); track m.materia_id) {
+          <div
+            class="rounded-2xl bg-gray-50 shadow-md p-4 flex items-center justify-between"
+          >
+            <div class="flex-1">
+              @if (editingId() === m.materia_id) {
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    pInputText
+                    type="text"
+                    class="w-full"
+                    placeholder="Nombre de la materia"
+                    [ngModel]="editNombre()"
+                    (ngModelChange)="editNombre.set($event)"
+                  />
+
+                  <p-dropdown
+                    appendTo="body"
+                    class="w-full sm:w-96"
+                    placeholder="Seleccionar docente"
+                    optionLabel="label"
+                    optionValue="id"
+                    [options]="docentes()"
+                    [ngModel]="editDocenteId()"
+                    (ngModelChange)="editDocenteId.set($event)"
+                  ></p-dropdown>
+
+                  <div class="flex items-center gap-2">
+                    <p-button
+                      text
+                      rounded
+                      size="small"
+                      icon="pi pi-check"
+                      severity="success"
+                      pTooltip="Guardar cambios"
+                      tooltipPosition="left"
+                      positionLeft="-5"
+                      [disabled]="updatingId() === m.materia_id"
+                      (onClick)="saveEdit(m)"
+                    ></p-button>
+
+                    <p-button
+                      text
+                      rounded
+                      size="small"
+                      icon="pi pi-times"
+                      severity="danger"
+                      pTooltip="Cancelar"
+                      tooltipPosition="left"
+                      positionLeft="-5"
+                      [disabled]="updatingId() === m.materia_id"
+                      (onClick)="cancelEdit()"
+                    ></p-button>
+                  </div>
+                </div>
+              } @else {
+                <div class="font-medium text-lg">{{ m.materia_nombre }}</div>
+                <div class="text-sm text-gray-600">
+                  Docente: {{ m.docente_apellido }}, {{ m.docente_nombre }} ({{
+                    m.docente_email
+                  }})
+                </div>
+                <div class="text-sm text-gray-600 mt-1">
+                  Estado: <span>{{ isActiva(m) ? "Activa" : "Inactiva" }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="flex items-center gap-2">
+              @if (editingId() !== m.materia_id) {
+                <p-button
+                  text
+                  rounded
+                  size="small"
+                  icon="pi pi-pencil"
+                  severity="secondary"
+                  pTooltip="Editar materia"
+                  tooltipPosition="left"
+                  positionLeft="-5"
+                  [disabled]="updatingId() === m.materia_id"
+                  (onClick)="startEdit(m)"
+                ></p-button>
+
+                @if (isActiva(m)) {
+                  <p-button
+                    text
+                    rounded
+                    size="small"
+                    icon="pi pi-eye-slash"
+                    severity="danger"
+                    pTooltip="Desactivar materia"
+                    tooltipPosition="left"
+                    positionLeft="-5"
+                    [disabled]="updatingId() === m.materia_id"
+                    (onClick)="desactivar(m)"
+                  ></p-button>
+                } @else {
+                  <p-button
+                    text
+                    rounded
+                    size="small"
+                    icon="pi pi-eye"
+                    severity="success"
+                    pTooltip="Activar materia"
+                    tooltipPosition="left"
+                    positionLeft="-5"
+                    [disabled]="updatingId() === m.materia_id"
+                    (onClick)="activar(m)"
+                  ></p-button>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

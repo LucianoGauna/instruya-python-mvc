@@ -1,0 +1,91 @@
+<div class="flex flex-col gap-5">
+  <h1 class="text-2xl sm:text-4xl font-lato font-semibold">Dashboard Alumno</h1>
+
+  @if (loading()) {
+    <p>Cargando resumen...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+  } @else if (!resumen()) {
+    <p>No hay datos disponibles.</p>
+  } @else {
+    <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+      <p class="text-gray-700">
+        Bienvenido
+        @if (user()) {
+          <span class="font-semibold">{{ user()!.email }}</span>
+        }
+        .
+      </p>
+      <p class="text-gray-700 mt-1">
+        Institución:
+        <span class="font-semibold">
+          {{ resumen()!.institucion?.nombre ?? "Sin institución" }}
+        </span>
+      </p>
+      <p class="text-gray-700 mt-1">
+        Carrera:
+        <span class="font-semibold">
+          {{ resumen()!.carrera?.nombre ?? "Sin carrera" }}
+        </span>
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Materias (aceptadas)</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.materias.aceptadas }}
+        </div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Promedio actual (nota materia)</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.promedio_nota_materia ?? "-" }}
+        </div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Materias aprobadas</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.materias.aprobadas }}
+        </div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Materias desaprobadas</div>
+        <div class="text-3xl font-semibold">
+          {{ resumen()!.materias.desaprobadas }}
+        </div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 col-span-1 h-auto shadow-md p-4">
+        <h2 class="text-lg font-semibold mb-3">Estado de materias</h2>
+        @if ((resumen()!.materias.aprobadas + resumen()!.materias.desaprobadas) === 0) {
+          <p class="text-gray-600">Todavía no tenés materias calificadas con nota materia.</p>
+        } @else {
+          <div class="w-full flex justify-center">
+            <p-chart
+              type="doughnut"
+              width="300"
+              height="300"
+              [data]="doughnutData"
+              [options]="doughnutOptions"
+            ></p-chart>
+          </div>
+        }
+      </div>
+
+      <div class="rounded-2xl bg-gray-50 col-span-1 xl:col-span-3 shadow-md p-4">
+        <h2 class="text-lg font-semibold mb-3">Notas finales por materia</h2>
+        @if (!barData) {
+          <p class="text-gray-600">No tenés finales registrados para graficar.</p>
+        } @else {
+          <p-chart
+            type="bar"
+            width="100%"
+            height="300px"
+            [data]="barData"
+            [options]="barOptions"
+          ></p-chart>
+        }
+      </div>
+    </div>
+  }
+</div>

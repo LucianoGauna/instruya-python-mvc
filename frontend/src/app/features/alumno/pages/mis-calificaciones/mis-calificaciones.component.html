@@ -1,0 +1,51 @@
+<div class="flex flex-col gap-5">
+  <div class="w-full flex items-center justify-between">
+    <p-button
+      text
+      rounded
+      severity="secondary"
+      icon="pi pi-arrow-left"
+      styleClass="!w-5 hover:!bg-transparent !border-none"
+      (onClick)="goBack()"
+    ></p-button>
+
+    <h1 class="text-2xl sm:text-4xl font-lato font-semibold">
+      Mis calificaciones
+    </h1>
+  </div>
+
+  @if (loading()) {
+    <p>Cargando...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+  } @else {
+    @if (calificaciones().length === 0) {
+      <p>No tenés calificaciones cargadas.</p>
+    } @else {
+      <div class="grid grid-cols-1 gap-3 xl:grid-cols-2">
+        @for (c of calificaciones(); track c.calificacion_id) {
+          <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+            <div class="flex flex-col gap-3">
+              <div class="font-medium text-lg">{{ c.materia_nombre }}</div>
+              <div class="flex flex-col gap-1">
+                <div class="text-sm text-gray-600">
+                  {{ c.tipo }} · Nota: {{ c.nota }}
+                </div>
+
+                <div class="text-sm text-gray-600">
+                  Docente: {{ c.docente_nombre }} {{ c.docente_apellido }} ({{
+                    c.docente_email
+                  }})
+                </div>
+
+                <div class="text-sm text-gray-500">
+                  Fecha: {{ c.fecha | date: "short" }}
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

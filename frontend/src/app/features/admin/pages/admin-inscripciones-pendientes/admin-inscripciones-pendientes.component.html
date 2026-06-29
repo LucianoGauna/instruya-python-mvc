@@ -1,0 +1,144 @@
+<p-toast></p-toast>
+<div class="flex flex-col gap-3">
+  <div class="w-full flex items-center justify-between">
+    <p-button
+      text
+      rounded
+      severity="secondary"
+      icon="pi pi-arrow-left"
+      styleClass="!w-5 hover:!bg-transparent !border-none"
+      (onClick)="goBack()"
+    ></p-button>
+
+    <h1 class="text-2xl sm:text-4xl font-lato font-semibold">
+      Inscripciones pendientes
+    </h1>
+  </div>
+
+  @if (loading()) {
+    <p>Cargando...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+  } @else {
+    @if (pendientes().length === 0) {
+      <p>No hay inscripciones pendientes.</p>
+    } @else {
+      <div class="grid grid-cols-1 gap-3 xl:grid-cols-2">
+        @for (p of pendientes(); track p.inscripcion_id) {
+          <div
+            class="rounded-2xl bg-gray-50 shadow-md p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div class="space-y-1">
+              <div class="font-medium">
+                {{ p.alumno_apellido }}, {{ p.alumno_nombre }}
+              </div>
+              <div class="text-sm text-gray-600">
+                {{ p.alumno_email }} · Legajo: {{ p.legajo ?? "Sin legajo" }}
+              </div>
+              <div class="text-sm text-gray-600">
+                {{ p.carrera_nombre }} · {{ p.materia_nombre }}
+              </div>
+              <div class="text-sm text-gray-600">
+                Solicitud: {{ p.fecha | date: "dd/MM/yyyy" }}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <p-button
+                size="small"
+                label="Aceptar"
+                icon="pi pi-check"
+                severity="success"
+                [disabled]="processingRejectId() === p.inscripcion_id"
+                (onClick)="openAceptarDialog(p)"
+              ></p-button>
+
+              <p-button
+                size="small"
+                label="Rechazar"
+                icon="pi pi-times"
+                severity="danger"
+                [loading]="processingRejectId() === p.inscripcion_id"
+                [disabled]="processingRejectId() === p.inscripcion_id"
+                (onClick)="rechazar(p)"
+              ></p-button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <p-dialog
+    header="Aceptar inscripción"
+    [modal]="true"
+    [closable]="!savingAccept()"
+    [draggable]="false"
+    [resizable]="false"
+    [visible]="dialogVisible()"
+    [style]="{ width: '32rem', maxWidth: '95vw' }"
+    (visibleChange)="dialogVisible.set($event)"
+    (onHide)="closeDialog()"
+  >
+    @if (selected()) {
+      <div class="mb-4 text-sm text-gray-700">
+        {{ selected()!.alumno_apellido }}, {{ selected()!.alumno_nombre }} ·
+        {{ selected()!.materia_nombre }}
+      </div>
+    }
+
+    <form [formGroup]="acceptForm" class="space-y-4">
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium">Año</label>
+        <p-datepicker
+        appendTo="body"
+          formControlName="anio"
+          view="year"
+          dateFormat="yy"
+          [fluid]="true"
+        ></p-datepicker>
+        @if (
+          acceptForm.controls.anio.touched && acceptForm.controls.anio.invalid
+        ) {
+          <small class="text-red-600">Seleccioná un año.</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium">Período</label>
+        <p-dropdown
+          appendTo="body"
+          formControlName="periodo"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Seleccionar período"
+          [options]="periodosOptions"
+        ></p-dropdown>
+        @if (
+          acceptForm.controls.periodo.touched &&
+          acceptForm.controls.periodo.invalid
+        ) {
+          <small class="text-red-600">Seleccioná un período.</small>
+        }
+      </div>
+    </form>
+
+    <ng-template pTemplate="footer">
+      <div class="flex justify-end gap-2">
+        <p-button
+          label="Cancelar"
+          severity="secondary"
+          [disabled]="savingAccept()"
+          (onClick)="closeDialog()"
+        ></p-button>
+        <p-button
+          label="Guardar"
+          icon="pi pi-check"
+          [loading]="savingAccept()"
+          [disabled]="acceptForm.invalid || savingAccept()"
+          (onClick)="aceptarSeleccionada()"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>

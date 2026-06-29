@@ -1,0 +1,76 @@
+<div class="flex flex-col gap-5">
+  <div class="p-4">
+    <h1 class="text-2xl sm:text-4xl font-lato font-semibold mb-2">
+      Dashboard Superadmin
+    </h1>
+    <p class="text-gray-700">
+      @if (user()) {
+        Bienvenido, <span class="font-semibold">{{ user()!.email }}</span
+        >.
+      } @else {
+        Bienvenido.
+      }
+    </p>
+  </div>
+
+  @if (loading()) {
+    <p>Cargando resumen...</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ error() }}</p>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Instituciones</div>
+        <div class="text-3xl font-semibold">{{ totalInstituciones() }}</div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Instituciones activas</div>
+        <div class="text-3xl font-semibold">{{ institucionesActivas() }}</div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Instituciones inactivas</div>
+        <div class="text-3xl font-semibold">{{ institucionesInactivas() }}</div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Administradores totales</div>
+        <div class="text-3xl font-semibold">{{ totalAdmins() }}</div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Admins activos</div>
+        <div class="text-3xl font-semibold">{{ adminsActivos() }}</div>
+      </div>
+      <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+        <div class="text-sm text-gray-600">Admins inactivos</div>
+        <div class="text-3xl font-semibold">{{ adminsInactivos() }}</div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl bg-gray-50 shadow-md p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-semibold text-lg">Últimas instituciones</h2>
+        <p-button
+          size="small"
+          label="Gestionar"
+          icon="pi pi-building"
+          (onClick)="goToInstituciones()"
+        ></p-button>
+      </div>
+
+      @if (ultimasInstituciones().length === 0) {
+        <p>No hay instituciones cargadas.</p>
+      } @else {
+        <div class="space-y-2">
+          @for (i of ultimasInstituciones(); track i.id) {
+            <div class="rounded-lg border border-platinum-700 p-3">
+              <div class="font-medium">{{ i.nombre }}</div>
+              <div class="text-sm text-gray-600">{{ i.email }}</div>
+              <div class="text-sm text-gray-600">
+                Estado: {{ i.activa === 1 ? "Activa" : "Inactiva" }}
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
