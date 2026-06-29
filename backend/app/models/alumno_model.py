@@ -21,6 +21,11 @@ class Calificacion(db.Model):
     fecha = db.Column(db.Date, nullable=True)
     nota = db.Column(db.Numeric(10, 2), nullable=True)
     descripcion = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        server_default=db.text("CURRENT_TIMESTAMP"),
+    )
 
 
 def to_date_only_iso(value):

@@ -8,6 +8,7 @@ from app.routes.auth_routes import auth_routes
 from app.routes.admin_routes import admin_routes
 from app.routes.superadmin_routes import superadmin_routes
 from app.routes.alumno_routes import alumno_routes
+from app.routes.docente_routes import docente_routes
 
 
 def create_app():
@@ -22,5 +23,6 @@ def create_app():
     app.register_blueprint(admin_routes, url_prefix="/admin")
     app.register_blueprint(superadmin_routes, url_prefix="/superadmin")
     app.register_blueprint(alumno_routes, url_prefix="/alumno")
+    app.register_blueprint(docente_routes, url_prefix="/docente")
 
     return app
