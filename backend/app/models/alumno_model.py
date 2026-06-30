@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 
 from sqlalchemy import Numeric, and_, case, cast, func
@@ -258,6 +258,7 @@ class AlumnoModel:
             fecha=date.today(),
             anio=None,
             periodo=None,
+            created_at=datetime.now()
         )
 
         try:

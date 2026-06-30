@@ -33,7 +33,11 @@ class InscripcionMateria(db.Model):
     anio = db.Column(db.Integer, nullable=True)
     periodo = db.Column(db.String(30), nullable=True)
     fecha = db.Column(db.Date, nullable=True)
-    created_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        server_default=db.text("CURRENT_TIMESTAMP"),
+    )
 
 class AlumnoPerfil(db.Model):
     __tablename__ = "alumno_perfil"
